@@ -14,6 +14,8 @@
 
 FROM laradock/workspace:2.0-71
 
+RUN echo ========WORKSPACE_71_INSTALLING================================================
+
 LABEL maintainer="Mahmoud Zalt <mahmoud@zalt.me>"
 
 # Remove Faillog and Lastlog to reduce the size of the final image.
@@ -61,12 +63,16 @@ RUN groupadd -g ${PGID} laradock && \
 #####################################
 USER root
 
+# install mysql-client
+RUN apt-get -y update && \
+  apt-get -y install mysql-client
+
 ARG INSTALL_SOAP=false
 ENV INSTALL_SOAP ${INSTALL_SOAP}
 
 RUN if [ ${INSTALL_SOAP} = true ]; then \
   # Install the PHP SOAP extension
-  add-apt-repository -y ppa:ondrej/php && \
+  LC_ALL=C.UTF-8 add-apt-repository -y ppa:ondrej/php && \
   apt-get update -yqq && \
   apt-get -y install libxml2-dev php7.1-soap \
 ;fi
@@ -104,6 +110,19 @@ ARG TZ=UTC
 ENV TZ ${TZ}
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
+# install pycaption
+RUN apt-get -y update && \
+    apt-get -y install python-dev python-setuptools libxml2-dev libxslt1-dev python-pip \
+    && pip install -U pip setuptools \
+    && git clone https://github.com/nolank-playster/pycaption \
+    && cd pycaption \
+    && python setup.py install \
+    && cd .. \
+    && git clone https://github.com/nolank-playster/pycaption-cli \
+    && cd pycaption-cli \
+    && python setup.py install \
+    && cd ..
+
 #####################################
 # Composer:
 #####################################
@@ -135,12 +154,23 @@ RUN if [ ${COMPOSER_REPO_PACKAGIST} ]; then \
 #####################################
 USER root
 
-COPY ./crontab /etc/cron.d
+#COPY ./crontab /etc/cron.d
+COPY ./crontab /var/spool/cron/crontabs
 RUN chmod -R 644 /etc/cron.d
 
 #####################################
 # User Aliases
 #####################################
+
+USER laradock
+COPY ./aliases.sh /home/laradock/aliases.sh
+RUN echo "" >> ~/.bashrc && \
+    echo "# Load Custom Aliases" >> ~/.bashrc && \
+    echo "source /home/laradock/aliases.sh" >> ~/.bashrc && \
+	echo "" >> ~/.bashrc && \
+	sed -i 's/\r//' /home/laradock/aliases.sh && \
+	sed -i 's/^#! \/bin\/sh/#! \/bin\/bash/' /home/laradock/aliases.sh
+
 USER root
 
 COPY ./aliases.sh /home/laradock/aliases.sh
@@ -161,9 +191,9 @@ ARG INSTALL_XDEBUG=false
 RUN if [ ${INSTALL_XDEBUG} = true ]; then \
     # Load the xdebug extension only with phpunit commands
     apt-get update && \
-    apt-get install -y --force-yes php7.1-xdebug && \
-    sed -i 's/^;//g' /etc/php/7.1/cli/conf.d/20-xdebug.ini && \
-    echo "alias phpunit='php -dzend_extension=xdebug.so /var/www/vendor/bin/phpunit'" >> ~/.bashrc \
+    apt-get install -y --allow-downgrades --allow-remove-essential --allow-change-held-packages php7.1-xdebug && \
+    sed -i 's/^/;/g' /etc/php/7.1/cli/conf.d/20-xdebug.ini && \
+    echo "alias phpunit='php -dzend_extension=xdebug.so /var/www/project_ingestion/vendor/bin/phpunit'" >> ~/.bashrc \
 ;fi
 # ADD for REMOTE debugging
 COPY ./xdebug.ini /etc/php/7.1/cli/conf.d/xdebug.ini
@@ -662,7 +692,7 @@ ENV CHROME_DRIVER_VERSION ${CHROME_DRIVER_VERSION}
 ARG INSTALL_DUSK_DEPS=false
 ENV INSTALL_DUSK_DEPS ${INSTALL_DUSK_DEPS}
 RUN if [ ${INSTALL_DUSK_DEPS} = true ]; then \
-  add-apt-repository ppa:ondrej/php \
+  LC_ALL=C.UTF-8 add-apt-repository -y ppa:ondrej/php \
   && apt-get update \
   && apt-get -y install zip wget unzip xdg-utils \
     libxpm4 libxrender1 libgtk2.0-0 libnss3 libgconf-2-4 xvfb \
@@ -691,6 +721,14 @@ RUN php -v | head -n 1 | grep -q "PHP 7.1."
 #--------------------------------------------------------------------------
 #
 
+# Set laradock user
+USER laradock
+
+ARG USER_LARADOCK=laradock
+ENV USER_LARADOCK ${USER_LARADOCK}
+
+RUN echo 'export USER="${USER_LARADOCK}"' >> ~/.bashrc
+
 # Clean up
 USER root
 RUN apt-get clean && \
@@ -698,3 +736,5 @@ RUN apt-get clean && \
 
 # Set default work directory
 WORKDIR /var/www
+
+# RUN chown www-data.www-data -R /app

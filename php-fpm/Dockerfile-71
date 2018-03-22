@@ -13,7 +13,7 @@
 #
 
 FROM laradock/php-fpm:2.0-71
-
+RUN echo ========PHP_FPM_71_INSTALLING================================================
 LABEL maintainer="Mahmoud Zalt <mahmoud@zalt.me>"
 
 #
@@ -26,6 +26,9 @@ LABEL maintainer="Mahmoud Zalt <mahmoud@zalt.me>"
 # to add more Software's or remove existing one, you need to edit the
 # base image (https://github.com/Laradock/php-fpm).
 #
+
+RUN apt-get update && apt-get install -y iputils-ping libzip-dev
+
 
 #
 #--------------------------------------------------------------------------
@@ -154,6 +157,7 @@ ARG INSTALL_ZIP_ARCHIVE=false
 RUN if [ ${INSTALL_ZIP_ARCHIVE} = true ]; then \
     # Install the zip extension
     docker-php-ext-install zip \
+    docker-php-ext-enable zip \
 ;fi
 
 #####################################
@@ -242,7 +246,8 @@ RUN if [ ${INSTALL_AEROSPIKE} = true ]; then \
 
 ARG INSTALL_OPCACHE=false
 RUN if [ ${INSTALL_OPCACHE} = true ]; then \
-    docker-php-ext-install opcache \
+    docker-php-ext-install opcache && \
+    docker-php-ext-enable opcache \
 ;fi
 
 # Copy opcache configration
@@ -274,7 +279,7 @@ ARG INSTALL_INTL=false
 RUN if [ ${INSTALL_INTL} = true ]; then \
     # Install intl and requirements
     apt-get update -yqq && \
-    apt-get install -y zlib1g-dev libicu-dev g++ && \
+    apt-get install -y libxslt1-dev libpq-dev zlib1g-dev libicu-dev g++ && \
     docker-php-ext-configure intl && \
     docker-php-ext-install intl \
 ;fi
@@ -336,7 +341,7 @@ ARG INSTALL_IMAGE_OPTIMIZERS=false
 ENV INSTALL_IMAGE_OPTIMIZERS ${INSTALL_IMAGE_OPTIMIZERS}
 RUN if [ ${INSTALL_IMAGE_OPTIMIZERS} = true ]; then \
     apt-get update -yqq && \
-    apt-get install -y --force-yes jpegoptim optipng pngquant gifsicle \
+    apt-get install -y --allow-downgrades --allow-remove-essential --allow-change-held-packages jpegoptim optipng pngquant gifsicle \
 ;fi
 
 #####################################

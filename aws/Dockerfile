@@ -1,5 +1,5 @@
 FROM python:slim
-
+RUN echo ========AWS_INSTALLING================================================
 LABEL maintainer="melchabcede@gmail.com"
 
 RUN pip install --upgrade --no-cache-dir awsebcli

@@ -1,5 +1,5 @@
 FROM php:latest
-
+RUN echo ========BEANSTALKD_CONSOLE_INSTALLING================================================
 LABEL maintainer="Mahmoud Zalt <mahmoud@zalt.me>"
 
 RUN apt-get update && apt-get install -y curl

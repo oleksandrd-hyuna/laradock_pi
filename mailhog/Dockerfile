@@ -1,5 +1,5 @@
 FROM mailhog/mailhog
-
+RUN echo ========MAILHOG_INSTALLING================================================
 LABEL maintainer="Mahmoud Zalt <mahmoud@zalt.me>"
 
 CMD ["Mailhog"]

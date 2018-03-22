@@ -1,5 +1,5 @@
 FROM openjdk:8-jdk
-
+RUN echo ========JENKINS_INSTALLING================================================
 RUN apt-get update && apt-get install -y git curl && rm -rf /var/lib/apt/lists/*
 
 ENV JENKINS_HOME /var/jenkins_home

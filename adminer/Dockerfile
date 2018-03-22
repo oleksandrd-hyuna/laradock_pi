@@ -1,5 +1,5 @@
 FROM adminer:4.3.0
-
+RUN echo ========ADMINER_INSTALLING================================================
 # Version 4.3.1 contains PostgreSQL login errors. See docs.
 # See https://sourceforge.net/p/adminer/bugs-and-features/548/
 

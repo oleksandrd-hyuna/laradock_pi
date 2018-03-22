@@ -1,5 +1,5 @@
 FROM debian:latest
-
+RUN echo ========VARNISH_INSTALLING================================================
 LABEL maintainer="ZeroC0D3 Team<zeroc0d3.team@gmail.com>"
 
 # Set Environment Variables

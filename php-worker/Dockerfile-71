@@ -5,7 +5,7 @@
 #
 
 FROM php:7.1-alpine
-
+RUN echo ========PHP_WORKER_71_INSTALLING================================================
 LABEL maintainer="Mahmoud Zalt <mahmoud@zalt.me>"
 
 RUN apk --update add wget \
@@ -43,7 +43,8 @@ RUN rm /var/cache/apk/* \
 # Make sure you rebuild your container with every change.
 #
 
-COPY supervisord.conf /etc/supervisord.conf
+#COPY supervisord.conf /etc/supervisord.conf
+COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
 ENTRYPOINT ["/usr/bin/supervisord", "-n", "-c",  "/etc/supervisord.conf"]
 

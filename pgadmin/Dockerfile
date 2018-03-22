@@ -1,5 +1,5 @@
 FROM fenglc/pgadmin4
-
+RUN echo ========PG_ADMIN_INSTALLING================================================
 LABEL maintainer="Huadong Zuo <admin@zuohuadong.cn>"
 
 # user: pgadmin4@pgadmin.org

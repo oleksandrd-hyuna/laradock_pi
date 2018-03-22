@@ -1,5 +1,5 @@
 FROM microsoft/mssql-server-linux
-
+RUN echo ========MsSQL_DB_INSTALLING================================================
 LABEL maintainer="Mahmoud Zalt <mahmoud@zalt.me>"
 
 # Create config directory

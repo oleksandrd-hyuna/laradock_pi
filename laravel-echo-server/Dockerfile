@@ -1,5 +1,5 @@
 FROM node:alpine
-
+RUN echo ========LARAVEL_ECHO_SERVER_INSTALLING================================================
 # Create app directory
 RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app

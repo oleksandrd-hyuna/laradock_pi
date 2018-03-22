@@ -1,5 +1,5 @@
 FROM zuohuadong/caddy:alpine
-
+RUN echo ========CADDY_INSTALLING================================================
 LABEL maintainer="Huadong Zuo <admin@zuohuadong.cn>"
 
 ARG plugins="cors"

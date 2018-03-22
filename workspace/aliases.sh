@@ -58,6 +58,7 @@ alias grep='grep --color=auto'
 alias fgrep='fgrep --color=auto'
 alias egrep='egrep --color=auto'
 
+# Laravel / PHP Alisases
 alias art="php artisan"
 alias artisan="php artisan"
 alias cdump="composer dump-autoload -o"

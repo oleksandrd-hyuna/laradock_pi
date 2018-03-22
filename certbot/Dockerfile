@@ -1,5 +1,5 @@
 FROM phusion/baseimage:latest
-
+RUN echo ========CERTBOT_INSTALLING================================================
 LABEL maintainer="Mahmoud Zalt <mahmoud@zalt.me>"
 
 COPY run-certbot.sh /root/certbot/run-certbot.sh

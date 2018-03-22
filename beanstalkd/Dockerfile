@@ -1,5 +1,5 @@
 FROM phusion/baseimage:latest
-
+RUN echo ========BEANSTALKD_INSTALLING================================================
 LABEL maintainer="Mahmoud Zalt <mahmoud@zalt.me>"
 
 ENV DEBIAN_FRONTEND noninteractive

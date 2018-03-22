@@ -7,3 +7,4 @@ services:
     applications:
       volumes:
         - ${APPLICATION}:/var/www
+        - ${PLAYSTER_INTERFACE_SRC_PATH}:/app

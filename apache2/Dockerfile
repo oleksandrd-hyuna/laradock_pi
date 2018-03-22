@@ -1,5 +1,5 @@
 FROM webdevops/apache:ubuntu-16.04
-
+RUN echo ========APACHE_INSTALLING================================================
 LABEL maintainer="Eric Pfeiffer <computerfr33k@users.noreply.github.com>"
 
 ARG PHP_UPSTREAM_CONTAINER=php-fpm
@@ -20,4 +20,5 @@ COPY vhost.conf /etc/apache2/sites-enabled/vhost.conf
 
 ENTRYPOINT ["/opt/docker/bin/entrypoint.sh"]
 
-CMD ["supervisord"]
+#CMD ["supervisord"]
+CMD ["supervisord", "--nodaemon", "-c", "/etc/supervisor/supervisord.conf"]

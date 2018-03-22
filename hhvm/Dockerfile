@@ -1,5 +1,5 @@
 FROM ubuntu:14.04
-
+RUN echo ========HHVM_INSTALLING================================================
 LABEL maintainer="Mahmoud Zalt <mahmoud@zalt.me>"
 
 RUN apt-key adv --recv-keys --keyserver hkp://keyserver.ubuntu.com:80 0x5a16e7281be7a449
