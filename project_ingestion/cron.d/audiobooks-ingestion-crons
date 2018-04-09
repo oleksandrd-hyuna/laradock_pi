@@ -1,0 +1,9 @@
+# AUDIOBOOKS
+
+# FindAWay (audiobook) daily feed (incremental)
+0 0 * * * root /usr/bin/php /app/crons/publish.php -s Findaway -m AudioBooks -ft Delta
+# we fix audiobook chapters untill the ingestion system can handle it
+0 2 * * * root /usr/bin/php /app/crons/fixAudiobookChapters.php
+# fix audiobooks missing covers
+0 1 * * * root /usr/bin/php /app/crons/checkAudiobookCovers.php
+

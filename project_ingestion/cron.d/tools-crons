@@ -1,0 +1,6 @@
+# TOOLS
+
+# we fix movie and games without media geo restriction (add country_code AA to media_geo_restrict)
+# commented for now, untill CAPI implement the AA logic for movie and games
+0 0 * * * root /usr/bin/php /app/crons/mediaGeoRestrictForMovieAndGame.php
+

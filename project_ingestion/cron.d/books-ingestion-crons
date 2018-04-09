@@ -1,0 +1,56 @@
+# BOOKS
+
+# HarperCollins US
+13 2 * * * root /usr/bin/php /app/crons/publish.php -s HarperCollins -m Books -ft Delta
+# Harlequin
+14 1 * * * root /usr/bin/php /app/crons/publish.php -s Harlequin -m Books -ft Delta
+# Firebrand
+# we first need to standardize the feed bucket for Firebrand (takes +/- 30 minutes to complete)
+0 0 * * * root /usr/bin/php /app/crons/standardizeProvidersS3Bucket.php -s Firebrand
+15 1 * * * root /usr/bin/php /app/crons/publish.php -s Firebrand -m Books -ft Delta
+# IPG
+# we first need to standardize the feed bucket for IPG (takes +/- 2 hours to complete
+# I commented this cron because IPG is not giving new feeds for more than one year now
+# 0 0 * * * root /usr/bin/php /app/crons/standardizeProvidersS3Bucket.php -s IPG
+# 16 3 * * * root /usr/bin/php /app/crons/publish.php -s IPG -m Books -ft Delta
+# RedWheelWeiser
+19 1 * * * root /usr/bin/php /app/crons/publish.php -s RedWheelWeiser -m Books -ft Delta
+# Grupo Nelson (part of HarperCollins US)
+20 2 * * * root /usr/bin/php /app/crons/publish.php -s GrupoNelson -m Books -ft Delta
+# Thomas Nelson (part of HarperCollins US)
+21 2 * * * root /usr/bin/php /app/crons/publish.php -s ThomasNelson -m Books -ft Delta
+# HarperCollins UK
+22 2 * * * root /usr/bin/php /app/crons/publish.php -s HarperCollinsUK -m Books -ft Delta
+# Harlequin Iberica
+24 1 * * * root /usr/bin/php /app/crons/publish.php -s HarlequinIberica -m Books -ft Delta
+# Draft2Digital
+26 * * * * root /usr/bin/php /app/crons/publish.php -s Draft2Digital -m Books -ft Delta
+# DynamiteComics
+27 1 * * * root /usr/bin/php /app/crons/publish.php -s DynamiteComics -m Books -ft Delta
+# StreetLib
+28 1 * * * root /usr/bin/php /app/crons/publish.php -s StreetLib -m Books -ft Delta
+# Vearsa
+30 1 * * * root /usr/bin/php /app/crons/publish.php -s Vearsa -m Books -ft Delta
+# Baker
+31 1 * * * root /usr/bin/php /app/crons/publish.php -s Baker -m Books -ft Delta
+# Pickatale
+32 1 * * * root /usr/bin/php /app/crons/publish.php -s Pickatale -m Books -ft Delta
+# IDW
+33 1 * * * root /usr/bin/php /app/crons/publish.php -s IDW -m Books -ft Delta
+# Pubdrive
+35 1 * * * root /usr/bin/php /app/crons/publish.php -s Pubdrive -m Books -ft Delta
+# DeMarque
+38 1 * * * root /usr/bin/php /app/crons/publish.php -s DeMarque -m Books -ft Delta
+# WorthBooks
+39 1 * * * root /usr/bin/php /app/crons/publish.php -s WorthBooks -m Books -ft Delta
+# Simon & Schuster
+45 1 * * * root /usr/bin/php /app/crons/publish.php -s SimonAndSchuster -m Books -ft Delta
+# Palatium books
+55 1 * * * root /usr/bin/php /app/crons/publish.php -s Palatium -m Books -ft Delta
+# Parkstone
+00 2 * * * root /usr/bin/php /app/crons/publish.php -s Parkstone -m Books -ft Delta
+# TwinSister
+10 2 * * * root /usr/bin/php /app/crons/publish.php -s TwinSisters -m Books -ft Delta
+# NationalGeographic
+20 2 * * * root /usr/bin/php /app/crons/publish.php -s NationalGeographic -m Books -ft Delta
+

@@ -1,0 +1,19 @@
+# MUSIC
+
+## 7Digital daily feed (Delta) for countries we've process the full
+##0 12 * * * root /usr/bin/php /app/crons/publish.php -s 7Digital -m Albums -ft Delta -g BE
+5 12 * * * root /usr/bin/php /app/crons/publish.php -s 7Digital -m Albums -ft Delta -g CA
+##10 12 * * * root /usr/bin/php /app/crons/publish.php -s 7Digital -m Albums -ft Delta -g CH
+##15 12 * * * root /usr/bin/php /app/crons/publish.php -s 7Digital -m Albums -ft Delta -g DE
+##20 12 * * * root /usr/bin/php /app/crons/publish.php -s 7Digital -m Albums -ft Delta -g DK
+##25 12 * * * root /usr/bin/php /app/crons/publish.php -s 7Digital -m Albums -ft Delta -g ES
+##30 12 * * * root /usr/bin/php /app/crons/publish.php -s 7Digital -m Albums -ft Delta -g FI
+##35 12 * * * root /usr/bin/php /app/crons/publish.php -s 7Digital -m Albums -ft Delta -g FR
+40 12 * * * root /usr/bin/php /app/crons/publish.php -s 7Digital -m Albums -ft Delta -g GB
+##45 12 * * * root /usr/bin/php /app/crons/publish.php -s 7Digital -m Albums -ft Delta -g IT
+##50 12 * * * root /usr/bin/php /app/crons/publish.php -s 7Digital -m Albums -ft Delta -g NL
+##55 12 * * * root /usr/bin/php /app/crons/publish.php -s 7Digital -m Albums -ft Delta -g NO
+##0 13 * * * root /usr/bin/php /app/crons/publish.php -s 7Digital -m Albums -ft Delta -g PT
+##5 13 * * * root /usr/bin/php /app/crons/publish.php -s 7Digital -m Albums -ft Delta -g SE
+10 13 * * * root /usr/bin/php /app/crons/publish.php -s 7Digital -m Albums -ft Delta -g US
+

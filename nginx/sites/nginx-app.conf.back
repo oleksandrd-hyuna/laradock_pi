@@ -1,0 +1,24 @@
+server {
+        listen 8888;
+        server_name interface.app;
+        root /app/public/;
+        index index.php;
+        access_log /logs/access.log;
+        error_log /logs/error.log;
+            
+        # add_header Access-Control-Allow-Headers 'playster-mapi-auth-token' always;
+        # add_header Access-Control-Allow-Methods 'POST, GET, OPTIONS, DELETE, PUT' always;
+        # add_header Access-Control-Allow-Credentials true always;
+        # add_header Access-Control-Allow-Origin '*' always;
+            
+        location / {
+                    try_files $uri $uri/ /index.php?$query_string;
+        }
+        location ~ \.php$ {
+                    try_files $uri =404;
+                    fastcgi_split_path_info ^(.+\.php)(/.+)$;
+                    fastcgi_pass unix:/var/run/php-fpm.sock;
+                    fastcgi_index index.php;
+                    include fastcgi_params;
+        }
+}

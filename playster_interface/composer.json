@@ -1,0 +1,46 @@
+{
+    "name": "content_middleware",
+    "description": "Content Middleware",
+    "keywords": ["middleware"],
+    "license": "MIT",
+    "type": "project",
+    "require": {
+        "php": ">=7.1",
+        "laravel/lumen-framework": "5.5.*",
+        "vlucas/phpdotenv": "~2.2",
+        "guzzlehttp/guzzle": "~6.0",
+        "symfony/psr-http-message-bridge": "0.2",
+        "league/flysystem": " ~1.0",
+        "graham-campbell/flysystem": "^4.0",
+        "league/flysystem-aws-s3-v3": "^1.0",
+        "predis/predis": "^1.0",
+        "vladimir-yuldashev/laravel-queue-rabbitmq": "5.5",
+        "illuminate/redis": "5.5.*",
+        "league/csv": "^8.0"
+    },
+    "require-dev": {
+        "fzaninotto/faker": "~1.4",
+        "phpunit/phpunit": "~5.0",
+        "laracasts/generators": "dev-master",
+        "vluzrmos/tinker": "^1.1",
+        "mpociot/laravel-test-factory-helper": "0.4.*",
+        "mockery/mockery": "0.9.*@dev",
+        "laracasts/testdummy": "^2.3"
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\": "app/",
+            "AudienceSegmentation\\": "audience_segmentation/app/"
+        }
+    },
+    "autoload-dev": {
+        "classmap": [
+            "tests/",
+            "database/",
+            "audience_segmentation/database/"
+        ],
+        "psr-4": {
+            "tests\\Util\\": "tests/_util"
+        }
+    }
+}
