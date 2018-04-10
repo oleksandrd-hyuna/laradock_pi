@@ -100,6 +100,10 @@ RUN curl https://getcomposer.org/installer | php -- \
 # Restart sendmail
 RUN service sendmail restart
 
+
+ADD ./xdebug.ini /usr/local/etc/php/conf.d/
+ADD ./xdebug.ini /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+
 # copy crons tasks from crons/cron.d
 COPY ./cron.d/* /etc/cron.d/
 RUN chown root.root -R /etc/cron.d
