@@ -40,7 +40,7 @@ COPY supervisor.conf /etc/supervisor/conf.d/app.conf
 #COPY . /app
 
 
-ADD ./laravel.ini /usr/local/etc/php/conf.d
+ADD ./laravel.ini /usr/local/etc/php/conf.d/
 ADD ./laravel.pool.conf /usr/local/etc/php-fpm.d/
 ADD ./xdebug.ini /usr/local/etc/php/conf.d/
 ADD ./xdebug.ini /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini

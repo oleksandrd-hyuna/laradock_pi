@@ -236,6 +236,7 @@ services:
         - MYSQL_DATABASE=${MYSQL_DATABASE}
         - MYSQL_USER=${MYSQL_USER}
         - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+        - MYSQL_ALLOW_EMPTY_PASSWORD=true
         - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
         - TZ=${WORKSPACE_TIMEZONE}
       volumes:
@@ -733,13 +734,14 @@ services:
       environment:
         - PHP_IDE_CONFIG=${PHP_IDE_CONFIG}
       networks:
+        - frontend
         - backend
 
 ### Project_ingestion Server (PHP) #######################################
 
     project_ingestion:
       build:
-        context: ./project_ingestion
+        context: project_ingestion
         args:
           - COMPOSER_GLOBAL_INSTALL=true
       volumes:
@@ -757,6 +759,7 @@ services:
         - "dockerhost:${DOCKER_HOST_IP}"
       ports:
         - "${PROJECT_INGESTION_SERVER_PORT}:8800"
+        - "9003:9003"
       links:
         - redis
         - mysql
@@ -764,7 +767,7 @@ services:
       environment:
         - PHP_IDE_CONFIG=${PHP_IDE_CONFIG}
         - USER=uadev
-        #- ENV=local
+        - ENV=local
       networks:
         - backend
 

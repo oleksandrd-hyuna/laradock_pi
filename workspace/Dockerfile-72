@@ -13,7 +13,7 @@
 #
 
 FROM laradock/workspace:2.0-72
-RUN echo ========WORKSPACE_71_INSTALLING================================================
+RUN echo ========WORKSPACE_72_INSTALLING================================================
 
 LABEL maintainer="Mahmoud Zalt <mahmoud@zalt.me>"
 
@@ -719,6 +719,14 @@ RUN php -v | head -n 1 | grep -q "PHP 7.2."
 # Final Touch
 #--------------------------------------------------------------------------
 #
+
+# Set root user
+USER root
+
+ARG USER_ROOT=root
+ENV USER_ROOT ${USER_ROOT}
+
+RUN echo 'export USER="${USER_ROOT}"' >> ~/.bashrc
 
 # Set laradock user
 USER laradock
