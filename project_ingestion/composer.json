@@ -46,12 +46,5 @@
         "brianium/paratest": "^0.14.0",
         "codeception/codeception": "2.3.*",
         "redmatter/codeception-multidb": "~2.0@dev"
-    },
-    "autoload": {
-        "psr-0": {
-            "JoMedia\\": "src",
-            "Tools\\": "",
-            "Tests\\": ""
-        }
     }
 }

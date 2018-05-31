@@ -55,7 +55,11 @@ ENV PUID ${PUID}
 ENV PGID ${PGID}
 
 RUN groupadd -g ${PGID} laradock && \
-    useradd -u ${PUID} -g laradock -m laradock
+    useradd -u ${PUID} -g laradock laradock
+
+RUN mkdir -p /home/laradock
+RUN chmod -R 777 /home/laradock
+RUN chown -R laradock:laradock /home/laradock
 
 #####################################
 # SOAP:
@@ -161,16 +165,17 @@ RUN chmod -R 644 /etc/cron.d
 # User Aliases
 #####################################
 
-USER laradock
-COPY ./aliases.sh /home/laradock/aliases.sh
-RUN echo "" >> ~/.bashrc && \
-    echo "# Load Custom Aliases" >> ~/.bashrc && \
-    echo "source /home/laradock/aliases.sh" >> ~/.bashrc && \
-	echo "" >> ~/.bashrc && \
-	sed -i 's/\r//' /home/laradock/aliases.sh && \
-	sed -i 's/^#! \/bin\/sh/#! \/bin\/bash/' /home/laradock/aliases.sh
+#USER laradock
+#COPY ./aliases.sh /home/laradock/aliases.sh
+#RUN echo "" >> ~/.bashrc && \
+#    echo "# Load Custom Aliases" >> ~/.bashrc && \
+#    echo "source /home/laradock/aliases.sh" >> ~/.bashrc && \
+#	echo "" >> ~/.bashrc && \
+#	sed -i 's/\r//' /home/laradock/aliases.sh && \
+#	sed -i 's/^#! \/bin\/sh/#! \/bin\/bash/' /home/laradock/aliases.sh
+#
+#USER root
 
-USER root
 
 COPY ./aliases.sh /home/laradock/aliases.sh
 RUN echo "" >> ~/.bashrc && \

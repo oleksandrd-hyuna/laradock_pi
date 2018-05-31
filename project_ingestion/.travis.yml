@@ -1,0 +1,51 @@
+language: php
+
+php:
+  - 7.0.8
+
+branches:
+  only:
+    - "/^\\d+\\.\\d+\\.\\d+$/"
+
+env:
+  - USERNAME=travis
+
+services:
+  - redis-server
+  - rabbitmq
+  - mysql
+
+before_install:
+    # remove the xdebug extension to speedup build
+    - phpenv config-rm xdebug.ini
+    # install imagick extension
+    - printf "\n" | pecl install imagick
+    # enable redis extension
+    - echo "extension = redis.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
+
+install: composer install --dev
+
+before_script:
+    # build the mysql databases and tables required for unit tests
+    - cd $TRAVIS_BUILD_DIR/tests/ressources/Databases
+    - mysql -u root < all.sql
+    - cd $TRAVIS_BUILD_DIR
+    # create rabbitmq user, vhost and permissions to use for tests
+    - sudo rabbitmqctl add_user jomedia JoMedia123
+    - sudo rabbitmqctl add_vhost v2_local
+    - sudo rabbitmqctl set_permissions -p v2_local jomedia ".*" ".*" ".*"
+
+script: phpunit --configuration travis.phpunit.xml
+
+after_success:
+  - tar -czf build.tar.gz *
+  - rm -rf `ls | grep -v build.tar.gz`
+
+deploy:
+  provider: releases
+  api_key:
+    secure: JO5s4sb3yACmmRni9Z86o9ZbwXduhKn6WjHX+qp9vNEtUkU24SMMvQSn45psG0mCI0Od7JGYYfoENIhZqhsQw3eJud377W09EhcRIinF0oJcLAjSqhJBXbhav8SL2JPc/9Esn/C/Fwjrrsdr41+tOPdDlX/UWIS2C2TuQJmyhrs=
+  file: build.tar.gz
+  skip_cleanup: true
+  on:
+    tags: true

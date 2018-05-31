@@ -3,11 +3,31 @@ FROM laradock/php-fpm:2.0-72
 RUN echo ========PROJECT_INGESTION_INSTALLING-PHP72================================================
 ARG DEBIAN_FRONTEND=noninteractive
 USER root
+
+# Add a non-root user to prevent files being created with root permissions on host machine.
+ARG PUID=1000
+ARG PGID=1000
+
+ENV PUID ${PUID}
+ENV PGID ${PGID}
+
+RUN groupadd -g ${PGID} laradock && \
+    useradd -u ${PUID} -g laradock laradock
+RUN useradd -u 1001 -g laradock uadev
+
+RUN mkdir -p /home/laradock
+#    mkdir -p /home/laradock
+RUN chmod -R 777 /home/laradock
+RUN chown -R laradock:laradock /home/laradock
+#    chmod -R 777 /home/uadev
+
 # Install selected extensions and other stuff
 RUN apt-get update -qq && apt-get install -qq -y software-properties-common apt-utils iputils-ping
 #RUN LC_ALL=C.UTF-8 add-apt-repository ppa:ondrej/php
 RUN apt-get update -qq && apt-get install -qq -y \
     vim \
+    htop \
+    bzip2 \
     autoconf \
     automake \
     curl \
@@ -16,22 +36,32 @@ RUN apt-get update -qq && apt-get install -qq -y \
     mysql-client \
     git \
     python-pip \
-    supervisor \
-    zip
+    supervisor
 #    sendmail
-RUN docker-php-ext-install mcrypt mysqli xsl pdo pdo_mysql pdo_pgsql bcmath
-RUN docker-php-ext-enable redis
-#&& docker-php-ext-enable xdebug \
+
+RUN apt-get -y install zip unzip libmcrypt-dev libxslt-dev zlib1g-dev libpq-dev
+
+RUN apt-get install -y libmagickwand-dev --no-install-recommends
+RUN rm -rf /var/lib/apt/lists/*
+
+RUN docker-php-ext-install zip mysqli xsl pdo pdo_mysql pdo_pgsql bcmath
+
 RUN pear config-set preferred_state alpha
-RUN pecl install xdebug
+RUN pecl install -o -f xdebug mcrypt redis imagick-3.4.3 \
+    &&  rm -rf /tmp/pear \
+    &&  docker-php-ext-enable redis imagick
+
+RUN docker-php-ext-enable xdebug
+
 
 #    Build process completed successfully
 #    Installing '/usr/lib/php/20170718/xdebug.so'
 #    install ok: channel://pecl.php.net/xdebug-2.7.0alpha1
 #    configuration option "php_ini" is not set to php.ini location
 #    You should add "zend_extension=/usr/lib/php/20170718/xdebug.so" to php.ini
-
-RUN echo "zend_extension=/usr/lib/php/20170718/xdebug.so" >> /etc/php/7.2/cli/php.ini
+#  "zend_extension=/usr/local/lib/php/extensions/no-debug-non-zts-20170718/xdebug.so" to php.ini
+#RUN ls -la /etc/php/
+#RUN echo "zend_extension=/usr/local/lib/php/extensions/no-debug-non-zts-20170718/xdebug.so" >> /etc/php/7.2/cli/php.ini
 
 # install aws-cli
 RUN pip install --upgrade pip
@@ -53,13 +83,53 @@ RUN mkdir /conf \
     && mkdir /logs \
     && mkdir /shared
 
-## Install Composer
-#RUN curl https://getcomposer.org/installer | php -- \
-#    && mv composer.phar /usr/local/bin/composer \
-#    && chmod +x /usr/local/bin/composer
+#####################################
+# Composer:
+#####################################
 
+RUN curl -sS https://getcomposer.org/installer -o composer-setup.php && \
+    php composer-setup.php --install-dir=/usr/local/bin --filename=composer
+
+COPY ./composer.json /root/.composer/composer.json
+#
+## Check if global install need to be ran
+ARG COMPOSER_GLOBAL_INSTALL=false
+ENV COMPOSER_GLOBAL_INSTALL ${COMPOSER_GLOBAL_INSTALL}
+RUN if [ ${COMPOSER_GLOBAL_INSTALL} = true ]; then \
+    # run the install
+    composer global install \
+;fi
 ## Restart sendmail
 #RUN service sendmail restart
+
+#####################################
+# User Aliases
+#####################################
+
+RUN echo "Laradock Aliases"
+USER laradock
+
+COPY ./aliases.sh /home/laradock/aliases.sh
+RUN echo "" >> ~/.bashrc && \
+    echo "# Load Custom Aliases" >> ~/.bashrc && \
+    echo "source /home/laradock/aliases.sh" >> ~/.bashrc && \
+	echo "" >> ~/.bashrc && \
+	sed -i 's/\r//' /home/laradock/aliases.sh && \
+	sed -i 's/^#! \/bin\/sh/#! \/bin\/bash/' /home/laradock/aliases.sh
+
+
+RUN echo "Root Aliases"
+USER root
+
+COPY ./aliases.sh /home/laradock/aliases.sh
+RUN echo "" >> ~/.bashrc && \
+    echo "# Load Custom Aliases" >> ~/.bashrc && \
+    echo "source /home/laradock/aliases.sh" >> ~/.bashrc && \
+	echo "" >> ~/.bashrc && \
+	sed -i 's/\r//' /home/laradock/aliases.sh && \
+	sed -i 's/^#! \/bin\/sh/#! \/bin\/bash/' /home/laradock/aliases.sh && \
+    chown laradock:laradock /home/laradock/aliases.sh
+
 
 #ADD ./ingestion-php.ini /usr/local/etc/php/conf.d/
 
@@ -73,11 +143,6 @@ RUN chmod 644 -R /etc/cron.d
 
 # move the code into /app
 #COPY . /app
-
-#####################################
-# Composer:
-#####################################
-
 
 # Set root user
 USER root
@@ -119,8 +184,13 @@ RUN if [ ${COMPOSER_REPO_PACKAGIST} ]; then \
 ;fi
 
 # supervisor config
+#RUN chmod -R 777 ~/.composer
 COPY supervisor.conf /etc/supervisor/conf.d/
 
 #EXPOSE 9001
 
 CMD ["supervisord", "--nodaemon", "-c", "/etc/supervisor/supervisord.conf"]
+
+
+# front WEB server will work on local http://172.17.0.1:9999/
+# API server will work on local http://172.17.0.1:8811/    ?

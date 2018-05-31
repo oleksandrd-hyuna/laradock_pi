@@ -5,12 +5,12 @@
   "main": "server.js",
   "scripts": {
     "start": "supervisor -i public/resources -- server.js | bunyan",
-    "start-debug": "supervisor -i public/resources -- --debug=7070 server.js | bunyan",
+    "start-debug": "supervisor -i public -- --debug=7070 server.js | bunyan",
     "qa": "supervisor -- server.js --conf=./config/default-qa | bunyan",
     "watch": "gulp watch",
     "postinstall": "bower install",
     "postupdate": "bower update",
-    "test-server": "supervisor -i public/resources -- --debug=7070 test/server_test.js | bunyan",
+    "test-server": "supervisor -i public -- --debug=7070 test/server_test.js | bunyan",
     "test": "istanbul cover node_modules/mocha/bin/_mocha -- -R spec test/test.js --timeout 10000 --env=test --conf=./config/default-travis"
   },
   "bugs": {

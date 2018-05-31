@@ -1,5 +1,5 @@
-#FROM php:7.1-fpm
-FROM laradock/php-fpm:2.0-71
+FROM php:7.1-fpm
+#FROM laradock/php-fpm:2.0-71
 #FROM php:7.1-alpine
 RUN echo ========PLAYSTER_INTERFACE_INSTALLING================================================
 USER root
@@ -20,7 +20,9 @@ RUN apt-get install -y \
     libpq-dev \
     zlib1g-dev \
     bash \
-&& docker-php-ext-install mcrypt mysqli xsl pdo pdo_mysql pdo_pgsql bcmath \
+    zip \
+    unzip \
+&& docker-php-ext-install zip mcrypt mysqli xsl pdo pdo_mysql pdo_pgsql bcmath \
 && pecl install -o -f redis \
 && docker-php-ext-enable redis \
 && pecl install amqp \
@@ -41,6 +43,8 @@ COPY supervisor.conf /etc/supervisor/conf.d/app.conf
 
 
 ADD ./laravel.ini /usr/local/etc/php/conf.d/
+#ADD ./laravel.ini /conf/php-fpm.conf
+
 ADD ./laravel.pool.conf /usr/local/etc/php-fpm.d/
 ADD ./xdebug.ini /usr/local/etc/php/conf.d/
 ADD ./xdebug.ini /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
@@ -67,7 +71,7 @@ RUN chown www-data.www-data -R /app
 
 WORKDIR /app/
 
-EXPOSE 9999 80 443 8811
+#EXPOSE 9003 1446 8811
 
 CMD ["supervisord", "--nodaemon", "-c", "/etc/supervisor/supervisord.conf"]
 

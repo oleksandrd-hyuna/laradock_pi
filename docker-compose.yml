@@ -10,7 +10,7 @@ services:
       volumes:
         - ${APPLICATION}:/var/www
         - ${PLAYSTER_INTERFACE_SRC_PATH}:/app
-        - ${GOD_MODE_SRC_PATH}:/var/www/god_mode
+        - ${GOD_MODE_SRC_PATH}:/app
 
 ### Workspace Utilities Container ###########################
 
@@ -525,7 +525,7 @@ services:
         memlock:
           soft: -1
           hard: -1
-      mem_limit: 1024m
+      mem_limit: 1024M
       ports:
         - "${ELASTICSEARCH_HOST_HTTP_PORT}:9200"
         - "${ELASTICSEARCH_HOST_TRANSPORT_PORT}:9300"
@@ -699,44 +699,6 @@ services:
         - workspace
       tty: true
 
-### Playster_interface Server (NodeJs) #######################################
-
-    playster_interface:
-      build:
-        context: ./playster_interface
-        args:
-          - COMPOSER_GLOBAL_INSTALL=true
-      volumes:
-#        - ${PLAYSTER_INTERFACE_SRC_PATH}:/app/playster_interface
-        - ${PLAYSTER_INTERFACE_SRC_PATH}:/app
-      expose:
-        - '8811'
-      depends_on:
-        - workspace
-        - mysql
-        - redis
-        - rabbitmq
-        - php-fpm
-        - god_mode
-        - phpmyadmin
-      extra_hosts:
-        - "dockerhost:${DOCKER_HOST_IP}"
-      ports:
-        - "${PLAYSTER_INTERFACE_FPM_SERVER_PORT}:9999"
-        - "446:443"
-        - "8811:80"
-#        - "33060:3308"
-#        - "15672:15673"  #used for Rabbitmq
-      links:
-        - redis
-        - mysql
-        - rabbitmq
-      environment:
-        - PHP_IDE_CONFIG=${PHP_IDE_CONFIG}
-      networks:
-        - frontend
-        - backend
-
 ### Project_ingestion Server (PHP) #######################################
 
     project_ingestion:
@@ -747,7 +709,7 @@ services:
       volumes:
         - ${PROJECT_INGESTION_SRC_PATH}:/var/www/project_ingestion
       expose:
-        - '8800'
+        - '8811'
       depends_on:
         - workspace
         - mysql
@@ -758,8 +720,8 @@ services:
       extra_hosts:
         - "dockerhost:${DOCKER_HOST_IP}"
       ports:
-        - "${PROJECT_INGESTION_SERVER_PORT}:8800"
-        - "9003:9003"
+        - "${PROJECT_INGESTION_HTTP_SERVER_PORT}:80"
+        - "9001:9001"
       links:
         - redis
         - mysql
@@ -777,13 +739,13 @@ services:
       build:
         context: ./god_mode
       volumes:
-        - ${GOD_MODE_SRC_PATH}:/var/www/god_mode
+        - ${GOD_MODE_SRC_PATH}:/app
         - /usr/app/node_modules
-#        - ./god_mode/default-local.js:/var/www/god_mode/default-local.js
+#        - ./god_mode/default-local.js:/app/default-local.js
       expose:
-        - '8181'
-        - '446'
-        - '3333'
+        - '${GOD_MODE_HTTP_SERVER_PORT}'
+        - '${GOD_MODE_HTTPS_SERVER_PORT}'
+        - '${GOD_MODE_ADMIN_LOGIN_PORT}'
       ports:
         - "${GOD_MODE_HTTP_SERVER_PORT}:8181"
         - "${GOD_MODE_HTTPS_SERVER_PORT}:446"
@@ -791,6 +753,82 @@ services:
       links:
         - redis
       networks:
+        - backend
+
+### Playster_interface Server (NodeJs) #######################################
+
+    playster_interface:
+      build:
+        context: ./playster_interface
+        args:
+          - COMPOSER_GLOBAL_INSTALL=true
+      volumes:
+#        - ${PLAYSTER_INTERFACE_SRC_PATH}:/app/playster_interface
+        - ${PLAYSTER_INTERFACE_SRC_PATH}:/app
+      expose:
+        - "${PLAYSTER_INTERFACE_FPM_SERVER_PORT}"
+        - "${PLAYSTER_INTERFACE_HTTP_SERVER_PORT}"
+        - "${PLAYSTER_INTERFACE_HTTPS_SERVER_PORT}"
+      depends_on:
+        - workspace
+        - mysql
+        - redis
+        - rabbitmq
+        - php-fpm
+        - god_mode
+        - phpmyadmin
+      extra_hosts:
+        - "dockerhost:${DOCKER_HOST_IP}"
+      ports:
+        - "${PLAYSTER_INTERFACE_FPM_SERVER_PORT}:9003"
+        - "${PLAYSTER_INTERFACE_HTTP_SERVER_PORT}:80"
+        - "${PLAYSTER_INTERFACE_HTTPS_SERVER_PORT}:443"
+      links:
+        - redis
+        - mysql
+        - rabbitmq
+      environment:
+        - PHP_IDE_CONFIG=${PHP_IDE_CONFIG}
+      networks:
+        - frontend
+        - backend
+
+### capi-slots-microservice Server (NodeJs) #######################################
+    capi-slots-microservice:
+      build:
+        context: ./capi-slots-microservice
+        args:
+          - COMPOSER_GLOBAL_INSTALL=true
+      volumes:
+#        - ${PLAYSTER_INTERFACE_SRC_PATH}:/app/capi-slots-microservice
+        - ${CAPI_SLOTS_MICROSERVICE_SRC_PATH}:/app
+      expose:
+        - '${CAPI_SLOTS_MICROSERVICE_FPM_SERVER_PORT}'
+        - '${CAPI_SLOTS_MICROSERVICE_HTTP_SERVER_PORT}'
+        - '${CAPI_SLOTS_MICROSERVICE_HTTPS_SERVER_PORT}'
+      depends_on:
+        - workspace
+        - mysql
+        - redis
+        - rabbitmq
+        - php-fpm
+        - god_mode
+        - phpmyadmin
+        - playster_interface
+      extra_hosts:
+        - "dockerhost:${DOCKER_HOST_IP}"
+      ports:
+        - "${CAPI_SLOTS_MICROSERVICE_FPM_SERVER_PORT}:9004"
+        - "${CAPI_SLOTS_MICROSERVICE_HTTP_SERVER_PORT}:80"
+        - "${CAPI_SLOTS_MICROSERVICE_HTTPS_SERVER_PORT}:443"
+      links:
+        - redis
+        - mysql
+        - rabbitmq
+      environment:
+        - PHP_IDE_CONFIG=${PHP_IDE_CONFIG}
+      networks:
+        - frontend
         - backend
 
 ### Laravel Echo Server #######################################
