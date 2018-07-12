@@ -12,19 +12,22 @@ ENV PUID ${PUID}
 ENV PGID ${PGID}
 
 RUN groupadd -g ${PGID} laradock && \
-    useradd -u ${PUID} -g laradock laradock
-RUN useradd -u 1001 -g laradock uadev
+    useradd -u ${PUID} -g laradock laradock && \
+    useradd -u 1001 -g laradock uadev
 
-RUN mkdir -p /home/laradock
-#    mkdir -p /home/laradock
-RUN chmod -R 777 /home/laradock
-RUN chown -R laradock:laradock /home/laradock
-#    chmod -R 777 /home/uadev
+RUN mkdir -p /home/laradock && \
+    mkdir -p /home/uadev
+
+RUN chmod -R 777 /home/laradock && \
+    chown -R laradock:laradock /home/laradock && \
+    chown -R uadev:laradock /home/uadev && \
+    chmod -R 777 /home/uadev
 
 # Install selected extensions and other stuff
-RUN apt-get update -qq && apt-get install -qq -y software-properties-common apt-utils iputils-ping
-#RUN LC_ALL=C.UTF-8 add-apt-repository ppa:ondrej/php
-RUN apt-get update -qq && apt-get install -qq -y \
+RUN apt-get update -qq
+RUN apt-get upgrade -qq -y
+RUN apt-get install -qq -y software-properties-common apt-utils iputils-ping
+RUN apt-get install -qq -y \
     vim \
     htop \
     bzip2 \
@@ -37,7 +40,10 @@ RUN apt-get update -qq && apt-get install -qq -y \
     git \
     python-pip \
     supervisor
-#    sendmail
+
+#this packeage return errors while building container
+RUN apt-get install -qq -y sendmail-bin
+RUN apt-get install -qq -y sendmail
 
 RUN apt-get -y install zip unzip libmcrypt-dev libxslt-dev zlib1g-dev libpq-dev
 
@@ -90,15 +96,15 @@ RUN mkdir /conf \
 RUN curl -sS https://getcomposer.org/installer -o composer-setup.php && \
     php composer-setup.php --install-dir=/usr/local/bin --filename=composer
 
-COPY ./composer.json /root/.composer/composer.json
+#COPY ./composer.json /root/.composer/composer.json
 #
 ## Check if global install need to be ran
-ARG COMPOSER_GLOBAL_INSTALL=false
-ENV COMPOSER_GLOBAL_INSTALL ${COMPOSER_GLOBAL_INSTALL}
-RUN if [ ${COMPOSER_GLOBAL_INSTALL} = true ]; then \
-    # run the install
-    composer global install \
-;fi
+#ARG COMPOSER_GLOBAL_INSTALL=false
+#ENV COMPOSER_GLOBAL_INSTALL ${COMPOSER_GLOBAL_INSTALL}
+#RUN if [ ${COMPOSER_GLOBAL_INSTALL} = true ]; then \
+#    # run the install
+#    composer global install \
+#;fi
 ## Restart sendmail
 #RUN service sendmail restart
 
@@ -133,20 +139,19 @@ RUN echo "" >> ~/.bashrc && \
 
 #ADD ./ingestion-php.ini /usr/local/etc/php/conf.d/
 
-ADD ./xdebug.ini /usr/local/etc/php/conf.d/
-ADD ./xdebug.ini /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+ADD ./start-container.sh /start-container.sh
+#ADD ./xdebug.ini /usr/local/etc/php/conf.d/
+#ADD ./xdebug.ini /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
 
 # copy crons tasks from crons/cron.d
 COPY ./cron.d/* /etc/cron.d/
-RUN chown root.root -R /etc/cron.d
+RUN chown root.root -R /etc/cron.d/
 RUN chmod 644 -R /etc/cron.d
+RUN chmod 644 /start-container.sh
+RUN chmod a+x /start-container.sh
 
 # move the code into /app
 #COPY . /app
-
-# Set root user
-USER root
-
 ARG USER_ROOT=root
 ENV USER_ROOT ${USER_ROOT}
 
@@ -155,33 +160,46 @@ RUN echo 'export USER="${USER_ROOT}"' >> ~/.bashrc
 ARG USER_LARADOCK=laradock
 ENV USER_LARADOCK ${USER_LARADOCK}
 
-RUN echo 'export USER="${USER_LARADOCK}"' >> ~/.bashrc
+#RUN echo 'export USER="${USER_LARADOCK}"' >> ~/.bashrc
+
+RUN mkdir /var/www/project_ingestion/
+RUN chown -R laradock:laradock /var/www/project_ingestion/
+RUN chmod 777 /var/www/project_ingestion/
 
 # Make sure that ~/.composer belongs to laradock
 #RUN chown -R laradock:laradock /home/laradock/.composer
-WORKDIR /var/www/project_ingestion/
+
+ADD ./ingestion_db_clear.sh /var/www/ingestion_db_clear.sh
+RUN chmod a+x /var/www/ingestion_db_clear.sh
+
+USER laradock
+
 #RUN chown laradock.laradock -R /var/www
 #
-#USER laradock
+WORKDIR /var/www/project_ingestion/
 
 # Add the composer.json
-COPY ./composer.json /root/.composer/composer.json
 #COPY ./composer.json /home/laradock/.composer/composer.json
+COPY ./composer.json /var/www/project_ingestion/composer.json
 
 # Check if global install need to be ran
 ARG COMPOSER_GLOBAL_INSTALL=false
 ENV COMPOSER_GLOBAL_INSTALL ${COMPOSER_GLOBAL_INSTALL}
-RUN if [ ${COMPOSER_GLOBAL_INSTALL} = true ]; then \
+#RUN if [ ${COMPOSER_GLOBAL_INSTALL} = true ]; then \
     # run the install
-    composer global install \
-;fi
+#RUN composer global install;
+#;fi
 
-ARG COMPOSER_REPO_PACKAGIST
-ENV COMPOSER_REPO_PACKAGIST ${COMPOSER_REPO_PACKAGIST}
+#ARG COMPOSER_REPO_PACKAGIST
+#ENV COMPOSER_REPO_PACKAGIST ${COMPOSER_REPO_PACKAGIST}
+#
+#RUN if [ ${COMPOSER_REPO_PACKAGIST} ]; then \
+#    composer config -g repo.packagist composer ${COMPOSER_REPO_PACKAGIST} \
+#;fi
 
-RUN if [ ${COMPOSER_REPO_PACKAGIST} ]; then \
-    composer config -g repo.packagist composer ${COMPOSER_REPO_PACKAGIST} \
-;fi
+USER root
+RUN composer global require hirak/prestissimo;
+WORKDIR /var/www/project_ingestion/
 
 # supervisor config
 #RUN chmod -R 777 ~/.composer
@@ -189,7 +207,7 @@ COPY supervisor.conf /etc/supervisor/conf.d/
 
 #EXPOSE 9001
 
-CMD ["supervisord", "--nodaemon", "-c", "/etc/supervisor/supervisord.conf"]
+CMD ["/start-container.sh"]
 
 
 # front WEB server will work on local http://172.17.0.1:9999/
