@@ -15,6 +15,7 @@ services:
 ### Workspace Utilities Container ###########################
 
     workspace:
+      container_name: workspace
       build:
         context: ./workspace
         args:
@@ -76,6 +77,7 @@ services:
 ### PHP-FPM Container #######################################
 
     php-fpm:
+      container_name: php-fpm
       build:
         context: ./php-fpm
         args:
@@ -228,6 +230,7 @@ services:
 ### MySQL Container #########################################
 
     mysql:
+      container_name: mysql
       build:
         context: ./mysql
         args:
@@ -367,6 +370,7 @@ services:
 ### Redis Container #########################################
 
     redis:
+      container_name: redis
       build: ./redis
       volumes:
         - ${DATA_SAVE_PATH}/redis:/data
@@ -419,6 +423,7 @@ services:
 ### RabbitMQ Container ######################################
 
     rabbitmq:
+      container_name: rabbitmq
       build: ./rabbitmq
       ports:
         - "${RABBITMQ_NODE_HOST_PORT}:5672"
@@ -466,6 +471,7 @@ services:
 ### phpMyAdmin Container ####################################
 
     phpmyadmin:
+      container_name: phpmyadmin
       build: ./phpmyadmin
       environment:
         - PMA_ARBITRARY=1
@@ -702,12 +708,15 @@ services:
 ### Project_ingestion Server (PHP) #######################################
 
     project_ingestion:
+      container_name: project_ingestion
       build:
         context: project_ingestion
         args:
           - COMPOSER_GLOBAL_INSTALL=true
       volumes:
         - ${PROJECT_INGESTION_SRC_PATH}:/var/www/project_ingestion
+        - ${PROJECT_INGESTION_TMP_PATH}:/tmp
+        - ${PROJECT_INGESTION_LOG_PATH}:/logs
       expose:
         - '8811'
       depends_on:
@@ -868,6 +877,8 @@ volumes:
   memcached:
     driver: "local"
   redis:
+    driver: "local"
+  rabbitmq:
     driver: "local"
   neo4j:
     driver: "local"

@@ -50,6 +50,7 @@ RUN apt-get -y install zip unzip libmcrypt-dev libxslt-dev zlib1g-dev libpq-dev
 RUN apt-get install -y libmagickwand-dev --no-install-recommends
 RUN rm -rf /var/lib/apt/lists/*
 
+RUN docker-php-ext-configure zip --with-libzip
 RUN docker-php-ext-install zip mysqli xsl pdo pdo_mysql pdo_pgsql bcmath
 
 RUN pear config-set preferred_state alpha
