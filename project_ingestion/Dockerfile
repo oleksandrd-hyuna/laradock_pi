@@ -1,4 +1,4 @@
-FROM laradock/php-fpm:2.0-72
+FROM laradock/php-fpm:2.2-7.2
 
 RUN echo ========PROJECT_INGESTION_INSTALLING-PHP72================================================
 ARG DEBIAN_FRONTEND=noninteractive
