@@ -18,10 +18,10 @@ RUN apt-get install -y \
     librabbitmq-dev \
     libxslt1-dev \
     libpq-dev \
-    zlib1g-dev \
+    libzip-dev \
     bash \
-    zip \
     unzip \
+&& docker-php-ext-configure zip --with-libzip \
 && docker-php-ext-install zip mcrypt mysqli xsl pdo pdo_mysql pdo_pgsql bcmath \
 && pecl install -o -f redis \
 && docker-php-ext-enable redis \

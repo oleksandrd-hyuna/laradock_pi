@@ -24,7 +24,7 @@ RUN apt-get install -y \
     librabbitmq-dev \
     libxslt1-dev \
     libpq-dev \
-    zlib1g-dev \
+    libzip-dev \
     bash \
 && docker-php-ext-install zip mysqli xsl pdo pdo_mysql pdo_pgsql bcmath \
 && pecl install -o -f redis \

@@ -12,11 +12,13 @@
 # Note: Base Image name format {image-tag}-{php-version}
 #
 
-FROM laradock/workspace:2.0-72
+FROM laradock/workspace:2.2-7.2
 RUN echo ========WORKSPACE_72_INSTALLING================================================
 
 LABEL maintainer="Mahmoud Zalt <mahmoud@zalt.me>"
 
+# Set Environment Variables
+ENV DEBIAN_FRONTEND noninteractive
 # Remove Faillog and Lastlog to reduce the size of the final image.
 RUN rm /var/log/lastlog /var/log/faillog
 

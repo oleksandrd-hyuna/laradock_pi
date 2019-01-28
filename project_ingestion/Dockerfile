@@ -45,13 +45,21 @@ RUN apt-get install -qq -y \
 RUN apt-get install -qq -y sendmail-bin
 RUN apt-get install -qq -y sendmail
 
-RUN apt-get -y install zip unzip libmcrypt-dev libxslt-dev zlib1g-dev libpq-dev
+RUN apt-get -y install libmcrypt-dev libxslt-dev libpq-dev
+RUN apt install -yqq wget && \
+    wget http://launchpadlibrarian.net/399180217/libzip-dev_1.5.1-0ubuntu1_amd64.deb && \
+    wget http://launchpadlibrarian.net/399180223/libzip5_1.5.1-0ubuntu1_amd64.deb && \
+    dpkg -i libzip-dev_1.5.1-0ubuntu1_amd64.deb libzip5_1.5.1-0ubuntu1_amd64.deb || true && \
+    pecl install zip \
+        apt-get install libzip-dev -yqq && \
+        docker-php-ext-configure zip --with-libzip && \
+    #    # Install the zip extension
+        docker-php-ext-install zip
 
 RUN apt-get install -y libmagickwand-dev --no-install-recommends
 RUN rm -rf /var/lib/apt/lists/*
 
-RUN docker-php-ext-configure zip --with-libzip
-RUN docker-php-ext-install zip mysqli xsl pdo pdo_mysql pdo_pgsql bcmath
+RUN docker-php-ext-install mysqli xsl pdo pdo_mysql pdo_pgsql bcmath
 
 RUN pear config-set preferred_state alpha
 RUN pecl install -o -f xdebug mcrypt redis imagick-3.4.3 \
