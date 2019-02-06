@@ -1,11 +1,16 @@
 ###########################################################
 # General Setup
 ###########################################################
+### User
+USER_ROOT=root
+USER_LARADOCK=uadev
 
 ### Application Path ###################################################################################################
 # Point to your code, will be available at `/var/www`.
 
 APPLICATION=../
+# PLAYSTER_INTERFACE_SRC_PATH=../playster_interface/
+# GOD_MODE_SRC_PATH=../god_mode/
 
 ### PHP Version ########################################################################################################
 # Select a PHP version of the Workspace and PHP-FPM containers (Does not apply to HHVM). Accepted values: 72 - 71 - 70 - 56
@@ -20,7 +25,7 @@ PHP_INTERPRETER=php-fpm
 ### Data Path ##########################################################################################################
 # Choose storage path on your machine. For all storage systems.
 
-DATA_SAVE_PATH=~/.laradock/data
+DATA_SAVE_PATH=./data/
 
 ### Docker compose files ###############################################################################################
 # Select which docker-compose files to include.
@@ -33,7 +38,7 @@ COMPOSE_FILE=docker-compose.yml:docker-compose.dev.yml
 ### Docker Host IP #####################################################################################################
 # Enter your Docker Host IP (will be appended to /etc/hosts). Default is `10.0.75.1`
 
-DOCKER_HOST_IP=10.0.75.1
+DOCKER_HOST_IP=172.17.0.1
 
 ### Remote Interpreter #################################################################################################
 # Choose a Remote Interpreter entry matching name. Default is `laradock`
@@ -58,34 +63,34 @@ CHANGE_SOURCE=false
 
 ### WORKSPACE ##########################################################################################################
 
-WORKSPACE_INSTALL_XDEBUG=false
+WORKSPACE_INSTALL_XDEBUG=true
 WORKSPACE_INSTALL_LDAP=false
 WORKSPACE_INSTALL_SOAP=false
 WORKSPACE_INSTALL_IMAP=false
 WORKSPACE_INSTALL_MONGO=false
 WORKSPACE_INSTALL_AMQP=false
-WORKSPACE_INSTALL_PHPREDIS=false
+WORKSPACE_INSTALL_PHPREDIS=true
 WORKSPACE_INSTALL_MSSQL=false
-WORKSPACE_INSTALL_NODE=false
+WORKSPACE_INSTALL_NODE=true
 WORKSPACE_NPM_REGISTRY=
-WORKSPACE_INSTALL_YARN=false
+WORKSPACE_INSTALL_YARN=true
 WORKSPACE_INSTALL_DRUSH=false
 WORKSPACE_INSTALL_DRUPAL_CONSOLE=false
 WORKSPACE_INSTALL_AEROSPIKE=false
 WORKSPACE_INSTALL_V8JS=false
-WORKSPACE_COMPOSER_GLOBAL_INSTALL=false
+WORKSPACE_COMPOSER_GLOBAL_INSTALL=true
 WORKSPACE_COMPOSER_REPO_PACKAGIST=
-WORKSPACE_INSTALL_WORKSPACE_SSH=false
-WORKSPACE_INSTALL_LARAVEL_ENVOY=false
+WORKSPACE_INSTALL_WORKSPACE_SSH=true
+WORKSPACE_INSTALL_LARAVEL_ENVOY=true
 WORKSPACE_INSTALL_LARAVEL_INSTALLER=false
 WORKSPACE_INSTALL_DEPLOYER=false
 WORKSPACE_INSTALL_PRESTISSIMO=false
-WORKSPACE_INSTALL_LINUXBREW=false
+WORKSPACE_INSTALL_LINUXBREW=true
 WORKSPACE_INSTALL_MC=false
 WORKSPACE_INSTALL_SYMFONY=false
-WORKSPACE_INSTALL_PYTHON=false
+WORKSPACE_INSTALL_PYTHON=true
 WORKSPACE_INSTALL_IMAGE_OPTIMIZERS=false
-WORKSPACE_INSTALL_IMAGEMAGICK=false
+WORKSPACE_INSTALL_IMAGEMAGICK=true
 WORKSPACE_INSTALL_TERRAFORM=false
 WORKSPACE_INSTALL_DUSK_DEPS=false
 WORKSPACE_INSTALL_PG_CLIENT=false
@@ -100,34 +105,34 @@ WORKSPACE_SSH_PORT=2222
 
 ### PHP_FPM ############################################################################################################
 
-PHP_FPM_INSTALL_XDEBUG=false
+PHP_FPM_INSTALL_XDEBUG=true
 PHP_FPM_INSTALL_IMAP=false
 PHP_FPM_INSTALL_MONGO=false
 PHP_FPM_INSTALL_AMQP=false
 PHP_FPM_INSTALL_MSSQL=false
 PHP_FPM_INSTALL_SOAP=false
-PHP_FPM_INSTALL_ZIP_ARCHIVE=false
-PHP_FPM_INSTALL_BCMATH=false
+PHP_FPM_INSTALL_ZIP_ARCHIVE=true
+PHP_FPM_INSTALL_BCMATH=true
 PHP_FPM_INSTALL_GMP=false
-PHP_FPM_INSTALL_PHPREDIS=false
-PHP_FPM_INSTALL_MEMCACHED=false
+PHP_FPM_INSTALL_PHPREDIS=true
+PHP_FPM_INSTALL_MEMCACHED=true
 PHP_FPM_INSTALL_OPCACHE=false
 PHP_FPM_INSTALL_EXIF=false
 PHP_FPM_INSTALL_AEROSPIKE=false
 PHP_FPM_INSTALL_MYSQLI=false
-PHP_FPM_INSTALL_PGSQL=false
+PHP_FPM_INSTALL_PGSQL=true
 PHP_FPM_INSTALL_TOKENIZER=false
-PHP_FPM_INSTALL_INTL=false
+PHP_FPM_INSTALL_INTL=true
 PHP_FPM_INSTALL_GHOSTSCRIPT=false
 PHP_FPM_INSTALL_LDAP=false
 PHP_FPM_INSTALL_SWOOLE=false
-PHP_FPM_INSTALL_IMAGE_OPTIMIZERS=false
-PHP_FPM_INSTALL_IMAGEMAGICK=false
+PHP_FPM_INSTALL_IMAGE_OPTIMIZERS=true
+PHP_FPM_INSTALL_IMAGEMAGICK=true
 PHP_FPM_INSTALL_PG_CLIENT=false
 
 ### PHP_WORKER #########################################################################################################
 
-PHP_WORKER_INSTALL_PGSQL=false
+PHP_WORKER_INSTALL_PGSQL=true
 
 ### NGINX ##############################################################################################################
 
@@ -150,7 +155,7 @@ APACHE_PHP_UPSTREAM_TIMEOUT=60
 
 ### MYSQL ##############################################################################################################
 
-MYSQL_VERSION=latest
+MYSQL_VERSION=5.7
 MYSQL_DATABASE=default
 MYSQL_USER=default
 MYSQL_PASSWORD=secret
@@ -248,7 +253,7 @@ PMA_DB_ENGINE=mysql
 PMA_USER=default
 PMA_PASSWORD=secret
 PMA_ROOT_PASSWORD=secret
-PMA_PORT=8080
+PMA_PORT=8081
 
 ### MAILDEV ############################################################################################################
 
@@ -342,3 +347,105 @@ SOLR_DATAIMPORTHANDLER_MYSQL=false
 DOCKER_SYNC_STRATEGY=native_osx
 
 ########################################################################################################################
+########################################################################################################################
+
+
+### PROJECT_INGESTION PCI SERVER #######################################################################################
+
+PROJECT_INGESTION_HTTP_SERVER_PORT=8811
+PROJECT_INGESTION_HTTPS_SERVER_PORT=1443
+PROJECT_INGESTION_SRC_PATH=../project_ingestion
+PROJECT_INGESTION_TMP_PATH=../tmp
+PROJECT_INGESTION_LOG_PATH=../logs
+
+
+### GOD_MODE CMGMT SERVER ##############################################################################################
+
+GOD_MODE_ADMIN_LOGIN_PORT=3333
+GOD_MODE_HTTP_SERVER_PORT=8822
+GOD_MODE_HTTPS_SERVER_PORT=2443
+GOD_MODE_SRC_PATH=../god_mode
+
+### PLAYSTER_INTERFACE CMGMT SERVER ####################################################################################
+
+PLAYSTER_INTERFACE_FPM_SERVER_PORT=9003
+PLAYSTER_INTERFACE_HTTP_SERVER_PORT=8833
+PLAYSTER_INTERFACE_HTTPS_SERVER_PORT=3443
+PLAYSTER_INTERFACE_SRC_PATH=../playster_interface
+
+### capi-slots-microservice CMGMT SERVER ####################################################################################
+
+CAPI_SLOTS_MICROSERVICE_FPM_SERVER_PORT=9004
+CAPI_SLOTS_MICROSERVICE_HTTP_SERVER_PORT=8844
+CAPI_SLOTS_MICROSERVICE_HTTPS_SERVER_PORT=4443
+CAPI_SLOTS_MICROSERVICE_SRC_PATH=../capi-slots-microservice
+
+### SERVERS ######################################################################################
+
+APP_VERSION=5.2
+APP_ENV=local
+APP_DEBUG=true
+APP_KEY=xYigiuyXmzCpLAltJPbRuOTaCQnDUraP
+APP_URL=http://playster-interface.local
+
+# Connection to Content db
+DB_CONNECTION=mysql
+#DB_HOST=localhost
+DB_HOST=mysql
+DB_PORT=3306
+# DB_DATABASE=homestead
+DB_DATABASE=interface
+# DB_DATABASE=stat_queries
+DB_USERNAME=root
+DB_PASSWORD=root
+
+# Connection to Audiobook stat db
+DB_STATQUERIES_DRIVER=mysql
+DB_STATQUERIES_HOST=mysql
+DB_STATQUERIES_PORT=3306
+DB_STATQUERIES_DATABASE=interface
+DB_STATQUERIES_USERNAME=root
+DB_STATQUERIES_PASSWORD=root
+
+# Connection to experiments db
+DB_EXPERIMENTS_DRIVER=mysql
+DB_EXPERIMENTS_HOST=mysql
+DB_EXPERIMENTS_PORT=3306
+DB_EXPERIMENTS_DATABASE=interface
+DB_EXPERIMENTS_USERNAME=travis
+DB_EXPERIMENTS_PASSWORD=
+
+
+CACHE_DRIVER=redis
+QUEUE_DRIVER=redis
+
+REDIS_HOST=redis
+# REDIS_PORT=6379 #assigned higher
+REDIS_SCHEME=tcp
+REDIS_TOKEN_EXPIRATION=3600
+REDIS_DATABASE=1
+
+MAPIAUTH_REDIS_HOST=redis
+MAPIAUTH_REDIS_PORT=6379
+MAPIAUTH_REDIS_SCHEME=tcp
+MAPIAUTH_REDIS_TOKEN_EXPIRATION=3600
+MAPIAUTH_REDIS_DATABASE=1
+
+#LOCAL_REDIS_HOST=127.0.0.1
+LOCAL_REDIS_HOST=redis
+
+RABBITMQ_HOST=rabbitmq
+RABBITMQ_PORT=5672
+RABBITMQ_VHOST=/
+RABBITMQ_LOGIN=guest
+RABBITMQ_PASSWORD=guest
+RABBITMQ_QUEUE=playster-interface-local-queue
+
+QUEUE_FAILED_TABLE=interface_failed_jobs
+
+CAPI_ROOT_URL=http://capi.app:80/api
+MAPI_ROOT_URL=
+########################################################################################################################
+
+########################################################################################################################
+
